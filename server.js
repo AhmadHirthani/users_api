@@ -35,8 +35,10 @@ const client = new pg.Client(process.env.DATABASE_URL);
 app.get('/', homePage);
 app.post('/', saveSimp);
 app.post('/add_new_user', handleAddNewUser);
+app.get('/send_notifications', handleSendNotifications);
 app.post('/login', handleLogin);
 app.post('/add_reg_token', handleAddRegToken);
+
 
 
 app.get('/favorite-quotes', getFavPage);
@@ -46,6 +48,16 @@ app.put('/favorite-quotes/:quote_id', handleEdit);
 
 // callback functions
 // -- WRITE YOUR CALLBACK FUNCTIONS FOR THE ROUTES HERE --
+
+function handleSendNotifications(req, res) {
+    let SQL = "SELECT * FROM users;";
+    client.query(SQL).then(data => {
+        const users = data.rows;
+        res.render('users', {
+            users
+        });
+    });
+}
 
 function handleAddRegToken(req,res){
     //regToken
@@ -110,15 +122,30 @@ function handleLogin(req,res){
         if (err) {
             console.error(err);
             res.status(500).send("Error: "+err.detail);
+            res.status(500).json({"status":500,"Response":err.detail})
+      
+
             // return done(); // always close connection
         }
         else  {
-            // let user = result.rows[0]
+            let user = result.rows[0]
+            console.log({user});
             if(password===result.rows[0].password){
-                res.send("right email and password"+"for the user ID: "+result.rows[0].id); // always close connection
+
+                // res.send("right email and password"+"for the user ID: "+result.rows[0].id); // always close connection
+                // res.status(200).json({"user_ID":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email })
+                // res.status(200).json({"status":200,"id":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email })
+                res.status(200).json({"status":true,"statusCode":200,"msg": "Login Successful",
+                "data":{"id":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email} })
+   
+
             }
             else{
-                res.send("Wrong password"); // always close connection
+                // res.send("Wrong password"); // always close connection
+                // res.status(500).json({"status":500,"Response":"Wrong password"})
+                res.status(500).json({"status":false,"statusCode":401,"msg": "Wrong password", "data":'()' })
+   
+
             }
             }         
   });
@@ -141,32 +168,19 @@ function handleAddNewUser(req,res){
     client.query(SQL, values,function (err, result) {
         if (err) {
             console.error(err);
-            res.status(500).send("Error: "+err.detail);
+            // res.status(500).send("Error: "+err.detail);
+            res.status(500).json({"status":false,"statusCode":401,"msg": err.detail, "data": '()' })
+
             // return done(); // always close connection
         }
         else  {
             let user = result.rows[0]
             console.log({user});
             // return your user
-            res.send(result.rows[0].first_name+" "+result.rows[0].second_name+" has been added succsefully"); // always close connection
-        // } else {
-        //     var emailInsert = "insert into public.user (user_auth_level, email, account_locked, contract) " +
-        //         "values ('1', $1,'false','false') RETURNING *"
-        //     client.query(emailInsert, [req.body.email], function (err, result) {
-        //         if (err) {
-        //             console.error(err);
-        //             res.status(500).send();
-        //             return done(); // always close connection
-        //         } else {
-        //             if (result.rowCount > 0) {
-        //                 let user = result.rows[0]
-        //                 // return your user
-        //                 return "done()"; // always close connection
-        //             }
-        //         }
-    
-        //     });
-        // }
+            // res.send(result.rows[0].first_name+" "+result.rows[0].second_name+" has been added succsefully"); // always close connection
+            res.status(200).json({"status":true,"statusCode":200,"msg": "User created successfully",
+             "data":{"id":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email} })
+
     }         
   });
 

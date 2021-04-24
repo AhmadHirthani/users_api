@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorite List</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  
+    <main>
+
+        <section class="left">
+            <% users.forEach(elem=>{ %>
+                <form action="">
+                    <h2><%= elem.first_name %>  <%= elem.second_name %></h2>
+
+                    
+                    <!-- <input type="text" name="first_name" value="<%= elem.first_name %>"> -->
+                    <!-- <input type="text" name="second_name" value="<%= elem.second_name %>"> -->
+                    <label for="notification_text">Notification text: </label>
+                    <input type="text" name="notification" id="notification_text" >
+                    <input type="button" value="send">
+
+                </form>
+                
+            <!-- <h2><%= elem.first_name %> </h2> -->
+            <!-- <p><%= elem.quote %> </p> -->
+          
+            <% }) %>
+        </section>
+      
+    </main>
+</body>
+
+</html>
