@@ -10,7 +10,7 @@
 </head>
 
 <body id="home">
-    <header>
+    <!-- <header>
         <%- include('./header') %> 
     </header>
     <section class="simps">
@@ -29,7 +29,66 @@
                 </form>
             </div>
         <%}) %>
-    </section>
+    </section> -->
+
+    <h1>Users API</h1>
+    <h2>This is an educational API which help students to register users</h2>
+    <div class="maindiv">
+        <h2>Create new user:</h2>
+
+        <h3>Endpoint: https://mcc-users-api.herokuapp.com/add_new_user</h3>
+        <h3>Method: POST</h3>
+
+
+        <h3>Body Example:</h3>
+
+        <h4>firstName: String</h4>
+
+        <h4>secondName: String</h4>
+
+        <h4>email: String</h4>
+
+        <h4>password: String</h4>
+
+    </div>
+    <div class="maindiv">
+        <h2>Check email and password:</h2>
+
+        <h3> Endpoint: https://mcc-users-api.herokuapp.com/login</h3>
+        <h3>Method: POST</h3>
+
+        <h3>Body Example:</h3>
+
+        <h4>email: String</h4>
+
+        <h4>password: String</h4>
+
+    </div>
+    <div class="maindiv">
+        <h2>Add regestration token:</h2>
+
+
+        <h3>Endpoint: https://mcc-users-api.herokuapp.com/add_reg_token</h3>
+        <h3>Method: POST</h3>
+
+        <h3>Body Example:</h3>
+
+        <h4>email: String</h4>
+
+        <h4>password: String</h4>
+
+        <h4>reg_token: String</h4>
+
+
+
+
+
+
+
+    </div>
+
+
+
 </body>
 
 </html>

@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    color: #fefb1e;
+    color: #27271d;
 }
 
 body {
@@ -10,7 +10,7 @@ body {
     margin: auto;
     /* display: flex; */
     /* justify-content: space-between; */
-    background-color: #62C8E4;
+    background-color: #c7f2fd;
 }
 
 .right,
@@ -87,4 +87,13 @@ display: flex;
 flex-direction: column;
 max-height: 70vh;
 background-color: #16a085;
+}
+
+.maindiv{
+    background-color: rgb(163, 163, 255);
+    padding: 20px 20px 20px 20px;
+    margin-bottom: 20px;
+}
+h2{ 
+    color: brown;
 }
