@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+    <header>
+        <%- include('./header') %>
+    </header>
+    <section class="detail">
+        <form action="/favorite-quotes/<%= rendData[0].id %>?_method=put " method="post">
+            <h1><%= rendData[0].character %> </h1>
+            <p><%= rendData[0].quote %> </p>
+            <img src="<%= rendData[0].image %> " alt="">
+            <textarea name="newQuote" id="quote" cols="30" rows="10"><%= rendData[0].quote %></textarea>
+            <button type="submit">Update Character</button>
+        </form>
+        <form action="/favorite-quotes/<%= rendData[0].id %>?_method=delete" method="post">
+            <button type="submit">Delete Character</button>
+        </form>
+    </section>
+</body>
+
+</html>

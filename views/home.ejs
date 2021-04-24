@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body id="home">
+    <header>
+        <%- include('./header') %> 
+    </header>
+    <section class="simps">
+
+        <% retData.forEach(elem =>{%>
+            <div class="indSimp">
+                <form action="/" method="POST">
+                    <h2><%= elem.character %> </h2>
+                    <input type="hidden" name="char" value="<%= elem.character %> ">
+                    <p><%= elem.quote %> </p>
+                    <input type="hidden" name="quote" value="<%= elem.quote %> ">
+                    <img src="<%= elem.image %> " alt="">
+                    <input type="hidden" name="img" value="<%= elem.image %> ">
+                    <input type="hidden" name="dir" value="<%= elem.characterDirection %> ">
+                    <button type="submit">Add to favorite</button>
+                </form>
+            </div>
+        <%}) %>
+    </section>
+</body>
+
+</html>
