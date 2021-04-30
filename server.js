@@ -5,6 +5,9 @@ const pg = require('pg');
 const methodOverride = require('method-override');
 const superagent = require('superagent');
 const cors = require('cors');
+var bodyParser = require('body-parser');
+
+
 
 // Environment variables
 require('dotenv').config();
@@ -12,6 +15,9 @@ require('dotenv').config();
 // Application Setup
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+app.use(bodyParser.json());
+
 
 // Express middleware
 // Utilize ExpressJS functionality to parse the body of the request
@@ -37,7 +43,7 @@ app.post('/', saveSimp);
 app.post('/add_new_user', handleAddNewUser);
 app.get('/send_notifications', handleSendNotifications);
 app.post('/login', handleLogin);
-app.post('/add_reg_token', handleAddRegToken);
+app.put('/add_reg_token', handleAddRegToken);
 
 
 
@@ -59,130 +65,153 @@ function handleSendNotifications(req, res) {
     });
 }
 
-function handleAddRegToken(req,res){
+function handleAddRegToken(req, res) {
     //regToken
     // console.log("req.body",req.body);
-    const { email,password,reg_token } = req.body;
+    const { email, password, reg_token } = req.body;
     // console.log({firstName});
-    let values = [ email,password,reg_token];
+    let values = [email, password, reg_token];
     // console.log({values});
     const SQL = `SELECT * from users where email = '${email}';`;
 
     client.query(SQL, function (err, result) {
         if (err) {
             console.error(err);
-            res.status(500).send("Error: "+err.detail);
+            // res.status(500).send("Error: "+err.detail);
+            res.status(500).json({ "status": false, "statusCode": 401, "msg": err.detail, "data": '()' })
+
             // return done(); // always close connection
         }
-        else  {
+        else if (result.rows[0]) {
             // let user = result.rows[0]
-            if(password===result.rows[0].password){
+            if (password === result.rows[0].password) {
 
                 const SQL = `UPDATE users SET reg_token='${reg_token}' WHERE email='${email}' returning *;`;
 
-                client.query(SQL,function (err, result) {
+                client.query(SQL, function (err, result) {
                     if (err) {
                         console.error(err);
-                        res.status(500).send("Error: "+err.detail);
+                        // res.status(500).send("Error: "+err.detail);
+                        res.status(500).json({ "status": false, "statusCode": 401, "msg": err.detail, "data": '()' })
+
                         // return done(); // always close connection
                     }
                     else  {
                         let user = result.rows[0]
-                        console.log({user});
+                        console.log({ user });
                         // return your user
-                        res.send("Registration token has been added succsefully"); // always close connection
-                
-                }         
-              });
+                        // res.send("Registration token has been added succsefully"); // always close connection
+                        res.status(200).json({
+                            "status": true, "statusCode": 200, "msg": "Registration token has been added succsefully",
+                            "data": { "id": result.rows[0].id, "first_name": result.rows[0].first_name, "second_name": result.rows[0].second_name, "email": result.rows[0].email, "Registration Code": result.rows[0].reg_token }
+                        })
+
+
+                    }
+
+                });
 
 
 
             }
-            else{
-                res.send("Wrong password"); // always close connection
+            else {
+                res.status(500).json({ "status": false, "statusCode": 401, "msg": "Wrong password", "data": '()' })
+
+                // res.send("Wrong password"); // always close connection
             }
-            }         
-  });
+        } else {
+            res.status(500).json({ "status": false, "statusCode": 401, "msg": "Wrong email", "data": '()' })
 
 
- 
+        }
+    });
+
+
+
 
 }
 
-function handleLogin(req,res){
+function handleLogin(req, res) {
     //regToken
     // console.log("req.body",req.body);
     const { email, password } = req.body;
     // console.log({firstName});
-    let values = [ email, password];
+    let values = [email, password];
     // console.log({values});
     const SQL = `SELECT * from users where email = '${email}';`;
 
     client.query(SQL, function (err, result) {
         if (err) {
             console.error(err);
-            res.status(500).send("Error: "+err.detail);
-            res.status(500).json({"status":500,"Response":err.detail})
-      
+            // res.status(500).send("Error: "+err.detail);
+            res.status(500).json({ "status": 500, "Response": err.detail })
+
 
             // return done(); // always close connection
         }
-        else  {
+        else if (result.rows[0]) {
             let user = result.rows[0]
-            console.log({user});
-            if(password===result.rows[0].password){
+            console.log({ user });
+            if (password === result.rows[0].password) {
 
                 // res.send("right email and password"+"for the user ID: "+result.rows[0].id); // always close connection
                 // res.status(200).json({"user_ID":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email })
                 // res.status(200).json({"status":200,"id":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email })
-                res.status(200).json({"status":true,"statusCode":200,"msg": "Login Successful",
-                "data":{"id":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email} })
-   
+                res.status(200).json({
+                    "status": true, "statusCode": 200, "msg": "Login Successful",
+                    "data": { "id": result.rows[0].id, "first_name": result.rows[0].first_name, "second_name": result.rows[0].second_name, "email": result.rows[0].email }
+                })
+
 
             }
-            else{
+            else {
                 // res.send("Wrong password"); // always close connection
                 // res.status(500).json({"status":500,"Response":"Wrong password"})
-                res.status(500).json({"status":false,"statusCode":401,"msg": "Wrong password", "data":'()' })
-   
+                res.status(500).json({ "status": false, "statusCode": 401, "msg": "Wrong password", "data": '()' })
+
 
             }
-            }         
-  });
+        } else {
+            res.status(500).json({ "status": false, "statusCode": 401, "msg": "Wrong email", "data": '()' })
+
+        }
+    });
 
 }
 
-function handleAddNewUser(req,res){
+function handleAddNewUser(req, res) {
     //regToken
-    // console.log("req.body",req.body);
+    console.log("req.body", req.body);
     const {
         firstName,
         secondName,
-        email,password
+        email, password
     } = req.body;
     // console.log({firstName});
-    let values = [ firstName, secondName, email,password];
+    let values = [firstName, secondName, email, password];
     // console.log({values});
     const SQL = "INSERT INTO users ( first_name, second_name, email,password) values ($1,$2,$3,$4) returning *;";
 
-    client.query(SQL, values,function (err, result) {
+    client.query(SQL, values, function (err, result) {
         if (err) {
             console.error(err);
             // res.status(500).send("Error: "+err.detail);
-            res.status(500).json({"status":false,"statusCode":401,"msg": err.detail, "data": '()' })
+            res.status(500).json({ "status": false, "statusCode": 401, "msg": err.detail, "data": '()' })
 
             // return done(); // always close connection
         }
-        else  {
+        else {
             let user = result.rows[0]
-            console.log({user});
+            console.log({ user });
             // return your user
             // res.send(result.rows[0].first_name+" "+result.rows[0].second_name+" has been added succsefully"); // always close connection
-            res.status(200).json({"status":true,"statusCode":200,"msg": "User created successfully",
-             "data":{"id":result.rows[0].id,"first_name":result.rows[0].first_name,"second_name":result.rows[0].second_name,"email":result.rows[0].email} })
+            res.status(200).json({
+                "status": true, "statusCode": 200, "msg": "User created successfully",
+                "data": { "id": result.rows[0].id, "first_name": result.rows[0].first_name, "second_name": result.rows[0].second_name, "email": result.rows[0].email }
+            })
 
-    }         
-  });
+        }
+    });
 
 }
 
